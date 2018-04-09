@@ -5,33 +5,25 @@ Incluye una cita célebre aleatoria en tus commits.
 ## Instalación
 
 ```console
-$ git clone https://github.com/pwaqo/commitquotes
-$ cd commitquotes
-$ bash install.sh
+$ pip install git+https://github.com/pwaqo/git-quotes.git
 ```
 
-## TODO
+## Features
 
-- Dar soporte para python 2.7 y python3.
-Solucionar problema python3.
+- [x] Script de Instalación
+global.
+- [x] Posibilidad de activar
+y desactivar git-quotes
+- [ ] Soporte para python2.7
+- [ ] Instalable mediante pip
+- [ ] English / Español
+- [ ] Citas filtradas mediante
+categorías y autores.
+- [ ] Archivo de configuración.
 
-- Ampliar quotes.json mediante categorías y
-autores.
+# Bugs
 
-- Archivo de configuración. Elegir categorías de
-notas, autores favoritos, etc.
-
-- Ampliar funcionalidad en los casos de ammend, merge, etc.
-Que esta funcionalidad sea configurable.
-
-- Solucionar problema de actualización de preparecommit-msg.
-Cada vez que se cambia, no se actualizan en los repositorios.
-
-Posibilidades:
-    - Instalación de un script `git-quotes`
-    - Mediante entry-points python
-    - `git-quotes activate`
-        - Copia el contenido del script en .git/hooks
-    - `git-quotes deactivate`
-        - Lo elimina / Lo renombra a un .sample
-
+- [ ] Molesto mensaje de ammend
+con git-quotes activado.
+- [ ] Mensaje de Merge. Probar
+todas las opciones.
