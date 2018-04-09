@@ -17,7 +17,7 @@ install() {
     if [ ! -e $hook_folder ]; then
         echo "Creando directorio $hook_folder"
         mkdir -p $hook_folder
-    else 
+    else
         echo "Directorio de hooks existente"
         if [ -e $hook_file ]; then
             echo "Ya tienes un hook de preparación de commit"
@@ -29,13 +29,13 @@ install() {
     echo "Activando directorio de plantillas de git"
     git config --global init.templates '$HOME/.git-templates'
     echo "Moviendo hook y archivo de citas"
-    cp prepare-commit-msg $hook_folder
+    cp prepare-commit-msg $hook_folder/prepare-commit-msg-quotes
     cp quotes.json $hook_folder
     echo "Otorgando permisos de ejecución"
     chmod +x $hook_file
 
     echo "Listo!"
-    echo "Ahora cada vez que realices git commit (sin la opción -m), se incluirá una 
+    echo "Ahora cada vez que realices git commit (sin la opción -m), se incluirá una
         frase célebre el mensaje. Estará precedida por una almohadilla luego tendrás
         que descomentar la línea".
 }
