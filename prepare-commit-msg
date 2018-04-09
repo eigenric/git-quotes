@@ -1,0 +1,36 @@
+#!/usr/bin/env python
+
+from __future__ import unicode_literals
+
+import json
+import os
+import textwrap
+import io
+import sys
+
+from random import choice
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+quotes_file = os.path.join(dir_path, 'quotes.json')
+
+if __name__ == '__main__':
+
+    if len(sys.argv[1::]) > 1:
+        if sys.argv[2] == "message":
+           sys.exit(0)
+
+    with open(quotes_file, "r") as fquotes:
+        quotes = json.load(fquotes, encoding='utf-8')
+
+    quote = choice(quotes)
+
+    with io.open(sys.argv[1], "r", encoding='utf-8') as commit_msg:
+        commit_text = commit_msg.read()
+
+    with io.open(sys.argv[1], "w", encoding='utf-8') as commit_msg:
+        formated_quote = "# \"{}\" ~ {}".format(quote['text'], quote['autor'])
+        formated_quote = '\n# '.join(textwrap.wrap(formated_quote, width=79))
+        formated_quote = '\n# ~ '.join(formated_quote.split('~'))
+
+        commit_msg.write("\n{}\n".format(formated_quote))
+        commit_msg.write(commit_text)
