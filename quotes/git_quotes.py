@@ -1,27 +1,41 @@
 from __future__ import unicode_literals
 
-import click
 import os
 import filecmp
-import json
 import random
+import json
+import subprocess
+import sys
+import crayons
+import click
 
 from shutil import copyfile
 from .groups import GitQuotesGroup, format_help
+from .utils import on_git_repo, get_repo_path, create_git_repository
 
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
-
+# Original files
 dir_path = os.path.dirname(os.path.realpath(__file__))
 original_hook = os.path.join(dir_path, 'hooks/prepare-commit-msg')
 original_quotes = os.path.join(dir_path, 'hooks/quotes.json')
 
-hooks_folder = os.path.join(os.getcwd(), '.git/hooks')
+# Copied files, repository dependent
+if on_git_repo():
+    repo_path = get_repo_path()
+else:
+    repo_path = os.getcwd()
+
+hooks_folder = os.path.join(repo_path, '.git/hooks')
 copy_hook = os.path.join(hooks_folder, 'prepare-commit-msg')
 sample_hook = os.path.join(hooks_folder, 'prepare-commit-msg-quotes')
 copy_quotes = os.path.join(hooks_folder, 'quotes.json')
 
 def is_active():
+    """Check if git-quotes is on. (prepare-commit-msg in hooks folder)"""
+
     return os.path.isfile(copy_hook)
+
+
+CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 @click.group(
     cls=GitQuotesGroup,
@@ -33,13 +47,31 @@ def cli(ctx):
 
     if ctx.invoked_subcommand is None:
         click.echo(format_help(ctx.get_help()))
-    elif not os.path.isdir(hooks_folder): # There is not repo!
-        click.secho("\nThere's no Git repository here!", fg="cyan")
-        ctx.exit()
+    else:
+        if ctx.invoked_subcommand == 'on':
+            return
+        elif not on_git_repo():
+            click.secho("\nThere is no repository here!", fg="cyan")
+            sys.exit(0)
 
 @cli.command(short_help="Activate git-quotes in a repository")
-def on():
+@click.option('--force', is_flag=True)
+def on(force):
     """Activate git-quotes in a repository"""
+
+    if not on_git_repo():
+        if not force:
+            click.secho("\nThere is no repository here!...", fg='cyan')
+            option = str(crayons.green('--force', bold=True))
+            msg = "{}{}".format(str(crayons.green("Use ")), option)
+            msg = "{}{}".format(msg, str(crayons.green(" to create one")))
+            click.secho(msg)
+            sys.exit(0)
+        else:
+            click.secho("Creating git repository here...", fg='green')
+            msg = create_git_repository(os.getcwd())
+            click.secho("> {}".format(msg), fg='cyan')
+
 
     if is_active():
         click.secho("\nGit-quotes was already active!", fg="green")
@@ -99,8 +131,13 @@ def toggle(ctx):
         ctx.forward(off)
 
 @cli.command(short_help="Show git-quotes status")
-def status():
+@click.option('--repo', is_flag=True)
+def status(repo):
     """Show git-quotes status"""
+
+    if repo:
+        repo_name = str(crayons.green(repo_path.split('/')[-1], bold=True))
+        click.secho("You are in {}".format(repo_name), fg='green')
 
     if is_active():
         click.secho("\nGit-quotes is active! :D", fg="green")

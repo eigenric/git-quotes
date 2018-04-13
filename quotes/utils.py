@@ -1,40 +1,30 @@
+import subprocess
 
-def format_help():
-    """Formats the help string."""
+def execute_success(command):
+    """Returns output if no excepcion ocurred, False otherwise"""
 
-    additional_help = """
-Usage Examples:
-   Create a new project using Python 3.6, specifically:
-   $ {1}
+    try:
+        output = subprocess.check_output(command,
+                                        stderr=subprocess.STDOUT)
+        return output.decode('unicode_escape').strip('\n')
+    except Exception:
+        return False
 
-   Install all dependencies for a project (including dev):
-   $ {2}
 
-   Create a lockfile containing pre-releases:
-   $ {6}
+def on_git_repo():
+    return bool(execute_success(['git', 'rev-parse', '--is-inside-work-tree']))
 
-   Show a graph of your installed dependencies:
-   $ {4}
 
-   Check your installed dependencies for security vulnerabilities:
-   $ {7}
+def get_repo_path():
+    return subprocess.check_output(
+            ['git', 'rev-parse', '--show-toplevel']
+    ).decode('unicode_escape').strip()
 
-   Install a local setup.py into your virtual environment/Pipfile:
-   $ {5}
-
-   Use a lower-level pip command:
-   $ {8}
-
-Commands:""".format(
-        crayons.red('pipenv --three'),
-        crayons.red('pipenv --python 3.6'),
-        crayons.red('pipenv install --dev'),
-        crayons.red('pipenv lock'),
-        crayons.red('pipenv graph'),
-        crayons.red('pipenv install -e .'),
-        crayons.red('pipenv lock --pre'),
-        crayons.red('pipenv check'),
-        crayons.red('pipenv run pip freeze'),
+def create_git_repository(directory):
+    proc = subprocess.Popen(
+            ['git', 'init'],
+            stdout=subprocess.PIPE,
+            bufsize=1,
+            cwd=directory
     )
-    help = help.replace('Commands:', additional_help)
-    return help
+    return str(proc.stdout.read().decode('unicode_escape'))
