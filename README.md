@@ -2,23 +2,23 @@
 
 Add beautiful quotes to your commits!
 
-## Instalación
+## Installation
 
 ```console
 $ pip install git+https://github.com/pwaqo/git-quotes.git
 ```
+
 ## Features
 
-- [x] Global installation script.
-- [x] Python2.7 Support
+- [x] Global installation script
+- [x] Soporte para python2.7
 - [x] Pip installable
-- [X] Cli-colours!
-- [ ] Tests!
-- [ ] Localization (English / Spanish)
-  - [ ] Cli
+- [x] Colorful cli thanks to crayons
+- [ ] Localization English / Spanish
   - [ ] Quotes
-- [ ] Custom category / author quotes
+  - [ ] Cli
+- [ ] Set custom category or author for quotes.
 
-## Bugs
+# Bugs
 
-- [x] Disable with Ammend, Merge commits
+- [x] Ignore ammend and merge commits
