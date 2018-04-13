@@ -19,7 +19,7 @@ if __name__ == '__main__':
         if sys.argv[2] == "message":
            sys.exit(0)
 
-    with open(quotes_file, "r") as fquotes:
+    with io.open(quotes_file, "r", encoding='utf-8') as fquotes:
         quotes = json.load(fquotes, encoding='utf-8')
 
     quote = choice(quotes)
@@ -32,5 +32,7 @@ if __name__ == '__main__':
         formated_quote = '\n# '.join(textwrap.wrap(formated_quote, width=79))
         formated_quote = '\n# ~ '.join(formated_quote.split('~'))
 
-        commit_msg.write("\n{}\n".format(formated_quote))
+        # Regular commits
+        if commit_text.split('\n')[0] == '':
+            commit_msg.write("\n{}\n".format(formated_quote))
         commit_msg.write(commit_text)
