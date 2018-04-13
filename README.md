@@ -1,8 +1,8 @@
 # Git Quotes
 
-Incluye una cita célebre aleatoria en tus commits.
+Add beautiful quotes to your commits!
 
-## Instalación
+## Installation
 
 ```console
 $ pip install git+https://github.com/pwaqo/git-quotes.git
@@ -10,20 +10,15 @@ $ pip install git+https://github.com/pwaqo/git-quotes.git
 
 ## Features
 
-- [x] Script de Instalación
-global.
-- [x] Posibilidad de activar
-y desactivar git-quotes
-- [ ] Soporte para python2.7
-- [ ] Instalable mediante pip
-- [ ] English / Español
-- [ ] Citas filtradas mediante
-categorías y autores.
-- [ ] Archivo de configuración.
+- [x] Global installation script
+- [x] Soporte para python2.7
+- [x] Pip installable
+- [x] Colorful cli thanks to crayons
+- [ ] Localization English / Spanish
+  - [ ] Quotes
+  - [ ] Cli
+- [ ] Set custom category or author for quotes.
 
 # Bugs
 
-- [ ] Molesto mensaje de ammend
-con git-quotes activado.
-- [ ] Mensaje de Merge. Probar
-todas las opciones.
+- [x] Ignore ammend and merge commits
