@@ -2,23 +2,21 @@ from __future__ import unicode_literals
 
 import os
 import filecmp
-import random
-import json
-import subprocess
 import sys
 import crayons
 import click
 
 from shutil import copyfile
 from .groups import GitQuotesGroup, format_help
-from .utils import on_git_repo, get_repo_path, create_git_repository
+from .utils import (on_git_repo, get_repo_path, create_git_repository,
+                    is_active)
 
 # Original files
 dir_path = os.path.dirname(os.path.realpath(__file__))
 original_hook = os.path.join(dir_path, 'hooks/prepare-commit-msg')
 original_quotes = os.path.join(dir_path, 'hooks/quotes.json')
 
-# Copied files, repository dependent
+
 if on_git_repo():
     repo_path = get_repo_path()
 else:
@@ -29,13 +27,8 @@ copy_hook = os.path.join(hooks_folder, 'prepare-commit-msg')
 sample_hook = os.path.join(hooks_folder, 'prepare-commit-msg-quotes')
 copy_quotes = os.path.join(hooks_folder, 'quotes.json')
 
-def is_active():
-    """Check if git-quotes is on. (prepare-commit-msg in hooks folder)"""
-
-    return os.path.isfile(copy_hook)
-
-
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
+
 
 @click.group(
     cls=GitQuotesGroup,
@@ -53,6 +46,7 @@ def cli(ctx):
         elif not on_git_repo():
             click.secho("\nThere is no repository here!", fg="cyan")
             sys.exit(0)
+
 
 @cli.command(short_help="Activate git-quotes in a repository")
 @click.option('--force', is_flag=True)
@@ -72,8 +66,7 @@ def on(force):
             msg = create_git_repository(os.getcwd())
             click.secho("> {}".format(msg), fg='cyan')
 
-
-    if is_active():
+    if is_active(copy_hook):
         click.secho("\nGit-quotes was already active!", fg="green")
         return
 
@@ -89,13 +82,14 @@ def on(force):
 
     click.secho("\nGit-quotes has been activated successfully :)", fg="green")
 
+
 @cli.command(short_help="Refresh hook if it changed")
 def refresh():
     """Refresh hook if it changed"""
 
-    if is_active():
+    if is_active(copy_hook):
         click.secho("Git-quotes is active\n", fg="green")
-        if not filecmp.cmp(original_hook, copy_hook): # Change
+        if not filecmp.cmp(original_hook, copy_hook):  # Change
             click.secho("Hook has changed, copying..!", fg="green")
             click.secho("Done!", fg="green")
             copyfile(original_hook, copy_hook)
@@ -110,25 +104,28 @@ def refresh():
         else:
             click.secho("No hook has changed!", fg="green")
 
+
 @cli.command(short_help="Disable git-quotes in a repository")
 def off():
     """Disable git-quotes in a repository"""
 
-    if is_active():
+    if is_active(copy_hook):
         os.rename(copy_hook, sample_hook)
-        click.secho("\nGit-quotes has been desactivated! :(", fg="cyan")
+        click.secho("\nGit-quotes has been disabled! :(", fg="cyan")
     else:
         click.secho("\nGit-quotes was already unactive! :()", fg="cyan")
+
 
 @cli.command(short_help="Toggle git-quotes status")
 @click.pass_context
 def toggle(ctx):
     """Toggle git-quotes status"""
 
-    if not is_active():
+    if not is_active(copy_hook):
         ctx.forward(on)
     else:
         ctx.forward(off)
+
 
 @cli.command(short_help="Show git-quotes status")
 @click.option('--repo', is_flag=True)
@@ -139,7 +136,7 @@ def status(repo):
         repo_name = str(crayons.green(repo_path.split('/')[-1], bold=True))
         click.secho("You are in {}".format(repo_name), fg='green')
 
-    if is_active():
+    if is_active(copy_hook):
         click.secho("\nGit-quotes is active! :D", fg="green")
     else:
         click.secho("\nGit-quotes is unactive! :@", fg="cyan")
