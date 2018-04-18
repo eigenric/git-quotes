@@ -41,21 +41,23 @@ def cli(ctx):
     if ctx.invoked_subcommand is None:
         click.echo(format_help(ctx.get_help()))
     else:
-        if ctx.invoked_subcommand == 'on':
-            return
-        elif not on_git_repo():
+        if not on_git_repo():
             click.secho("\nThere is no repository here!", fg="cyan")
+            # On --force (?)
+            if ctx.invoked_subcommand == 'on':
+                return
             sys.exit(0)
 
 
 @cli.command(short_help="Activate git-quotes in a repository")
 @click.option('--force', is_flag=True)
-def on(force):
+@click.pass_context
+def on(ctx, force):
     """Activate git-quotes in a repository"""
 
+    # Create repo with on --force or show help
     if not on_git_repo():
         if not force:
-            click.secho("\nThere is no repository here!...", fg='cyan')
             option = str(crayons.green('--force', bold=True))
             msg = "{}{}".format(str(crayons.green("Use ")), option)
             msg = "{}{}".format(msg, str(crayons.green(" to create one")))
@@ -70,6 +72,7 @@ def on(force):
         click.secho("\nGit-quotes was already active!", fg="green")
         return
 
+    # Activate
     if os.path.isfile(sample_hook):
         os.rename(sample_hook, copy_hook)
     else:
@@ -81,6 +84,8 @@ def on(force):
         os.chmod(copy_hook, int('755', 8))
 
     click.secho("\nGit-quotes has been activated successfully :)", fg="green")
+    if force:
+        ctx.invoke(refresh)
 
 
 @cli.command(short_help="Refresh hook if it changed")
@@ -90,7 +95,7 @@ def refresh():
     if is_active(copy_hook):
         click.secho("Git-quotes is active\n", fg="green")
         if not filecmp.cmp(original_hook, copy_hook):  # Change
-            click.secho("Hook has changed, copying..!", fg="green")
+            click.secho("Hook has changed, copying...", fg="green")
             click.secho("Done!", fg="green")
             copyfile(original_hook, copy_hook)
         else:
