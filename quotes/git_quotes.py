@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import os
 import filecmp
 import sys
@@ -41,27 +39,71 @@ def cli(ctx):
     if ctx.invoked_subcommand is None:
         click.echo(format_help(ctx.get_help()))
     else:
-        if not on_git_repo():
-            click.secho("\nThere is no repository here!", fg="cyan")
-            # On --force (?)
-            if ctx.invoked_subcommand == 'on':
+        # Exceptions for commands with global options
+        if ctx.invoked_subcommand in ['on', 'off']:
                 return
+        elif not on_git_repo():
+            click.secho("\nThere is no repository here!", fg="cyan")
             sys.exit(0)
 
 
 @cli.command(short_help="Activate git-quotes in a repository")
 @click.option('--force', is_flag=True)
+@click.option('--default', is_flag=True)
 @click.pass_context
-def on(ctx, force):
+def on(ctx, force, default):
     """Activate git-quotes in a repository"""
+
+    if default:
+        global_path = os.path.expanduser("~/.git-templates/hooks")
+        ghook = os.path.join(global_path, "prepare-commit-msg")
+        gsample = os.path.join(global_path, "prepare-commit-msg-quotes")
+        gquotes = os.path.join(global_path, "quotes.json")
+
+        if os.path.exists(global_path):
+
+            is_ghook_file = os.path.isfile(ghook)
+            is_gsample_file = os.path.isfile(gsample)
+
+            installed = (
+              (is_ghook_file and filecmp.cmp(original_hook, ghook)) or
+              (is_gsample_file and filecmp.cmp(original_hook, gsample))
+            )
+
+            if installed:
+                click.secho("\nGit-quotes is already activated by default",
+                            fg="green")
+                sys.exit(0)
+        else:
+            click.secho("Creating git-templates folder...", fg="green")
+            os.makedirs(global_path)
+
+        copyfile(original_hook, ghook)
+        copyfile(original_quotes, gquotes)
+
+        # Execution permissions
+        if os.name is 'posix' and os.path.exists(ghook):
+            os.chmod(ghook, int('755', 8))
+
+        click.secho("\nGit-quotes activated by default for new repositories",
+                    fg="green")
+        sys.exit(0)
 
     # Create repo with on --force or show help
     if not on_git_repo():
         if not force:
+            click.secho("\nThere is no repository here!\n", fg="cyan")
+
             option = str(crayons.green('--force', bold=True))
             msg = "{}{}".format(str(crayons.green("Use ")), option)
-            msg = "{}{}".format(msg, str(crayons.green(" to create one")))
-            click.secho(msg)
+            msg = "{}{}".format(msg, str(crayons.green(" to create one\n")))
+
+            option2 = str(crayons.green('--default', bold=True))
+            msg2 = "{}{}".format(str(crayons.green("Use ")), option2)
+            msg2 = "{}{}".format(
+                msg2, str(crayons.green(" to activate git-quotes by default"))
+                               )
+            click.secho("{}{}".format(msg, msg2))
             sys.exit(0)
         else:
             click.secho("Creating git repository here...", fg='green')
@@ -69,7 +111,7 @@ def on(ctx, force):
             click.secho("> {}".format(msg), fg='cyan')
 
     if is_active(copy_hook):
-        click.secho("\nGit-quotes was already active!", fg="green")
+        click.secho("\nGit-quotes is active!", fg="green")
         return
 
     # Activate
@@ -84,6 +126,7 @@ def on(ctx, force):
         os.chmod(copy_hook, int('755', 8))
 
     click.secho("\nGit-quotes has been activated successfully :)", fg="green")
+
     if force:
         ctx.invoke(refresh)
 
@@ -111,8 +154,37 @@ def refresh():
 
 
 @cli.command(short_help="Disable git-quotes in a repository")
-def off():
+@click.option("--default", is_flag=True)
+def off(default):
     """Disable git-quotes in a repository"""
+
+    if not on_git_repo():
+        if default:
+            global_path = os.path.expanduser("~/.git-templates/hooks")
+            ghook = os.path.join(global_path, "prepare-commit-msg")
+            gquotes = os.path.join(global_path, "quotes.json")
+
+            if os.path.exists(ghook):
+                os.remove(ghook)
+            if os.path.exists(gquotes):
+                os.remove(gquotes)
+
+                click.secho("\nGit quotes is now disabled by default",
+                            fg="green")
+            else:
+                click.secho("\nGit quotes is already disabled by default",
+                            fg="green")
+        else:
+            click.secho("\nThere is no repository here!\n", fg="cyan")
+
+            option = str(crayons.green('--default', bold=True))
+            msg = "{}{}".format(str(crayons.green("Use ")), option)
+            msg = "{}{}".format(
+                msg, str(crayons.green(" to disable git-quotes by default"))
+                               )
+            click.secho(msg)
+
+        sys.exit(0)
 
     if is_active(copy_hook):
         os.rename(copy_hook, sample_hook)

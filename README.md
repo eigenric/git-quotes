@@ -10,8 +10,7 @@ $ pip install git+https://github.com/pwaqo/git-quotes.git
 
 ## Features
 
-- [x] Global installation script
-- [x] Soporte para python2.7
+- [x] Default global status (on/off)
 - [x] Pip installable
 - [x] Colorful cli thanks to crayons
 - [ ] Localization English / Spanish
