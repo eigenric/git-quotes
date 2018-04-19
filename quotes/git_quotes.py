@@ -49,7 +49,7 @@ def cli(ctx):
 
 @cli.command(short_help="Activate git-quotes in a repository")
 @click.option('--force', is_flag=True)
-@click.option('--default', is_flag=True)
+@click.option("--global", "--default", is_flag=True)
 @click.pass_context
 def on(ctx, force, default):
     """Activate git-quotes in a repository"""
@@ -154,43 +154,41 @@ def refresh():
 
 
 @cli.command(short_help="Disable git-quotes in a repository")
-@click.option("--default", is_flag=True)
+@click.option("--global", "--default", is_flag=True)
 def off(default):
     """Disable git-quotes in a repository"""
 
-    if not on_git_repo():
-        if default:
-            global_path = os.path.expanduser("~/.git-templates/hooks")
-            ghook = os.path.join(global_path, "prepare-commit-msg")
-            gquotes = os.path.join(global_path, "quotes.json")
+    if default:
+        global_path = os.path.expanduser("~/.git-templates/hooks")
+        ghook = os.path.join(global_path, "prepare-commit-msg")
+        gquotes = os.path.join(global_path, "quotes.json")
 
-            if os.path.exists(ghook):
-                os.remove(ghook)
-            if os.path.exists(gquotes):
-                os.remove(gquotes)
+        if os.path.exists(ghook):
+            os.remove(ghook)
+        if os.path.exists(gquotes):
+            os.remove(gquotes)
 
-                click.secho("\nGit quotes is now disabled by default",
-                            fg="green")
-            else:
-                click.secho("\nGit quotes is already disabled by default",
-                            fg="green")
+            click.secho("\nGit quotes is now disabled by default",
+                        fg="green")
         else:
+            click.secho("\nGit quotes is already disabled by default",
+                        fg="green")
+    else:
+        if not on_git_repo():
             click.secho("\nThere is no repository here!\n", fg="cyan")
 
-            option = str(crayons.green('--default', bold=True))
-            msg = "{}{}".format(str(crayons.green("Use ")), option)
-            msg = "{}{}".format(
-                msg, str(crayons.green(" to disable git-quotes by default"))
-                               )
-            click.secho(msg)
+        if is_active(copy_hook):
+            os.rename(copy_hook, sample_hook)
+            click.secho("\nGit-quotes has been disabled! :(", fg="cyan")
+        else:
+            click.secho("\nGit-quotes was already unactive! :()", fg="cyan")
 
-        sys.exit(0)
-
-    if is_active(copy_hook):
-        os.rename(copy_hook, sample_hook)
-        click.secho("\nGit-quotes has been disabled! :(", fg="cyan")
-    else:
-        click.secho("\nGit-quotes was already unactive! :()", fg="cyan")
+        option = str(crayons.green('--default', bold=True))
+        msg = "{}{}".format(str(crayons.green("\nUse ")), option)
+        msg = "{}{}".format(
+            msg, str(crayons.green(" to disable git-quotes by default"))
+                           )
+        click.secho(msg)
 
 
 @cli.command(short_help="Toggle git-quotes status")
