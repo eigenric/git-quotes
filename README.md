@@ -4,13 +4,13 @@ Add beautiful quotes to your commits!
 
 (in Spanish)
 
-[![asciicast](https://asciinema.org/a/XTM4lIuOrDP1omcfu5RdO2tP6.png)](https://asciinema.org/a/XTM4lIuOrDP1omcfu5RdO2tP6)
-
 ## Installation
 
 ```console
 $ pip install git-quotes --user
 ```
+
+[![asciicast](https://asciinema.org/a/XTM4lIuOrDP1omcfu5RdO2tP6.png)](https://asciinema.org/a/XTM4lIuOrDP1omcfu5RdO2tP6)
 
 ## Features
 
