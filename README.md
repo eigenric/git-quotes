@@ -5,7 +5,7 @@ Add beautiful quotes to your commits!
 ## Installation
 
 ```console
-$ pip install git+https://github.com/pwaqo/git-quotes.git
+$ pip install git-quotes
 ```
 
 ## Features
@@ -17,7 +17,3 @@ $ pip install git+https://github.com/pwaqo/git-quotes.git
   - [ ] Quotes
   - [ ] Cli
 - [ ] Set custom category or author for quotes.
-
-# Bugs
-
-- [x] Ignore ammend and merge commits
