@@ -49,7 +49,7 @@ def cli(ctx):
 
 @cli.command(short_help="Activate git-quotes in a repository")
 @click.option('--force', is_flag=True)
-@click.option("--global", "--default", is_flag=True)
+@click.option("--default", is_flag=True)
 @click.pass_context
 def on(ctx, force, default):
     """Activate git-quotes in a repository"""
