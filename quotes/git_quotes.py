@@ -82,7 +82,7 @@ def on(ctx, force, default):
         copyfile(original_quotes, gquotes)
 
         # Execution permissions
-        if os.name is 'posix' and os.path.exists(ghook):
+        if os.name == 'posix' and os.path.exists(ghook):
             os.chmod(ghook, int('755', 8))
 
         click.secho("\nGit-quotes activated by default for new repositories",
@@ -122,7 +122,7 @@ def on(ctx, force, default):
         copyfile(original_quotes, copy_quotes)
 
     # Execution permissions
-    if os.name is 'posix' and os.path.exists(copy_hook):
+    if os.name == 'posix' and os.path.exists(copy_hook):
         os.chmod(copy_hook, int('755', 8))
 
     click.secho("\nGit-quotes has been activated successfully :)", fg="green")
