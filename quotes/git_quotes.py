@@ -154,7 +154,7 @@ def refresh():
 
 
 @cli.command(short_help="Disable git-quotes in a repository")
-@click.option("--global", "--default", is_flag=True)
+@click.option("--default", is_flag=True)
 def off(default):
     """Disable git-quotes in a repository"""
 
