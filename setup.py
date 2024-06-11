@@ -11,14 +11,18 @@ with io.open('quotes/__init__.py', encoding='utf8') as version_file:
     else:
         raise RuntimeError("Unable to find version string.")
 
-with io.open("README.rst", encoding="utf-8") as readme:
-    long_description = readme.read()
+
+# read the contents of your README file
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 
 setup(
         name="git-quotes",
         description="Add beautiful quotes to your commits automatically",
         long_description=long_description,
+        long_description_content_type='text/markdown',
         url="https://github.com/eigenric/git-quotes",
         author="Ricardo Ruiz Fernández de Albas",
         author_email="ricardoruizfdez@gmail.com",
