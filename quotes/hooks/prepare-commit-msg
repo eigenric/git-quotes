@@ -20,7 +20,7 @@ if __name__ == '__main__':
            sys.exit(0)
 
     with io.open(quotes_file, "r", encoding='utf-8') as fquotes:
-        quotes = json.load(fquotes, encoding='utf-8')
+        quotes = json.load(fquotes)
 
     quote = choice(quotes)
 

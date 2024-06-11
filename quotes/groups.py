@@ -80,7 +80,7 @@ def format_help(help):
                         )
 
     with io.open(original_quotes, "r", encoding="utf-8") as qfile:
-        quotes = json.load(qfile, encoding="utf-8")
+        quotes = json.load(qfile)
     quote = random.choice(quotes)
 
     # Avoid large quotes
