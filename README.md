@@ -1,6 +1,6 @@
 # Git Quotes
 
-[![PyPI version](https://badge.fury.io/py/git-quotes.svg)](https://badge.fury.io/py/git-quotes)
+![PyPI - Version](https://img.shields.io/pypi/v/git-quotes)
 [![PyPI Supported Python Versions](https://img.shields.io/pypi/pyversions/git-quotes.svg)](https://pypi.python.org/pypi/git-quotes)
 [![check](https://github.com/eigenric/git-quotes/actions/workflows/check.yml/badge.svg)](https://github.com/eigenric/git-quotes/actions/workflows/check.yml)
 
