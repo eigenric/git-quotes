@@ -29,7 +29,7 @@ setup(
             'Topic :: Software Development :: Version Control :: Git',
             'License :: OSI Approved :: MIT License',
         ],
-        python_requires=">3",
+        python_requires=">=3.8, <3.13",
         version=version,
         packages=find_packages(),
         include_package_data=True,
